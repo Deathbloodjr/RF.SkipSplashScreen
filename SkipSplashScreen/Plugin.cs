@@ -5,13 +5,15 @@ using BepInEx.Logging;
 using HarmonyLib;
 using BepInEx.Configuration;
 using SkipSplashScreen.Plugins;
+using UnityEngine;
+using System.Collections;
 
 namespace SkipSplashScreen
 {
     [BepInPlugin(MyPluginInfo.PLUGIN_GUID, ModName, MyPluginInfo.PLUGIN_VERSION)]
     public class Plugin : BasePlugin
     {
-        const string ModName = "SkipSplashScreen";
+        public const string ModName = "SkipSplashScreen";
 
         public static Plugin Instance;
         private Harmony _harmony;
@@ -49,9 +51,20 @@ namespace SkipSplashScreen
 
             if (ConfigEnabled.Value)
             {
+                bool result = true;
+                result &= PatchFile(typeof(SkipSplashScreenPatch)); 
 
-                _harmony.PatchAll(typeof(SkipSplashScreenPatch));
-                Log.LogInfo($"Plugin {MyPluginInfo.PLUGIN_NAME} is loaded!");
+                if (result)
+                {
+                    Log.LogInfo($"Plugin {MyPluginInfo.PLUGIN_NAME} is loaded!");
+                }
+                else
+                {
+                    Log.LogError($"Plugin {MyPluginInfo.PLUGIN_GUID} failed to load.");
+                    // Unload this instance of Harmony
+                    // I hope this works the way I think it does
+                    _harmony.UnpatchSelf();
+                }
             }
             else
             {
@@ -64,6 +77,34 @@ namespace SkipSplashScreen
             //    _harmony.PatchAll(typeof(ExampleSortByUraPatch));
             //    Log.LogInfo($"Plugin {MyPluginInfo.PLUGIN_NAME} Example Patches are loaded!");
             //}
+        }
+
+        private bool PatchFile(Type type)
+        {
+            if (_harmony == null)
+            {
+                _harmony = new Harmony(MyPluginInfo.PLUGIN_GUID);
+            }
+            try
+            {
+                _harmony.PatchAll(type);
+#if DEBUG
+                Log.LogInfo("File patched: " + type.FullName);
+#endif
+                return true;
+            }
+            catch (Exception e)
+            {
+                Log.LogInfo("Failed to patch file: " + type.FullName);
+                Log.LogInfo(e.Message);
+                return false;
+            }
+        }
+
+        public static MonoBehaviour GetMonoBehaviour() => TaikoSingletonMonoBehaviour<CommonObjects>.Instance;
+        public void StartCoroutine(IEnumerator enumerator)
+        {
+            GetMonoBehaviour().StartCoroutine(enumerator);
         }
     }
 }

@@ -23,8 +23,8 @@ namespace SkipSplashScreen.Plugins
         [HarmonyPrefix]
         public static bool BootSceneUiController_StartAsync_Prefix(BootSceneUiController __instance, ref float duration)
         {
-            Plugin.Log.LogInfo("");
-            Plugin.Log.LogInfo("BootSceneUiController_StartAsync_Prefix");
+            //Logger.Log("");
+            //Logger.Log("BootSceneUiController_StartAsync_Prefix");
 
             SkipFade = true;
             duration = newDuration;
@@ -38,8 +38,8 @@ namespace SkipSplashScreen.Plugins
         [HarmonyPrefix]
         public static bool FadeCover_FadeInAsync_Prefix(BootSceneUiController __instance, ref float duration)
         {
-            Plugin.Log.LogInfo("");
-            Plugin.Log.LogInfo("FadeCover_FadeInAsync_Prefix");
+            //Logger.Log("");
+            //Logger.Log("FadeCover_FadeInAsync_Prefix");
 
             if (SkipFade)
             {
@@ -56,8 +56,8 @@ namespace SkipSplashScreen.Plugins
         [HarmonyPrefix]
         public static bool FadeCover_FadeOutAsync_Prefix(BootSceneUiController __instance, ref float duration)
         {
-            Plugin.Log.LogInfo("");
-            Plugin.Log.LogInfo("FadeCover_FadeOutAsync_Prefix");
+            //Logger.Log("");
+            //Logger.Log("FadeCover_FadeOutAsync_Prefix");
 
             if (SkipFade)
             {
@@ -68,33 +68,5 @@ namespace SkipSplashScreen.Plugins
 
             return true;
         }
-
-        //[HarmonyPatch(typeof(UiBootImage))]
-        //[HarmonyPatch(nameof(UiBootImage.SetType))]
-        //[HarmonyPatch(MethodType.Normal)]
-        //[HarmonyPrefix]
-        //public static bool UiBootImage_Bind_Prefix(UiBootImage __instance)
-        //{
-        //    Plugin.Log.LogInfo("");
-        //    Plugin.Log.LogInfo("UiBootImage_Bind_Prefix");
-
-        //    __instance.Skip();
-
-        //    return true;
-        //}
-
-        //[HarmonyPatch(typeof(BootSceneUiController))]
-        //[HarmonyPatch(nameof(BootSceneUiController.Bind))]
-        //[HarmonyPatch(MethodType.Normal)]
-        //[HarmonyPostfix]
-        //public static void BootSceneUiController_Bind_Postfix(BootSceneUiController __instance)
-        //{
-
-        //    Plugin.Log.LogInfo("");
-        //    Plugin.Log.LogInfo("BootSceneUiController_Bind_Postfix");
-
-        //    __instance.Teardown();
-
-        //}
     }
 }
