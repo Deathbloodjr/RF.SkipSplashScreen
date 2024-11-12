@@ -24,8 +24,6 @@ namespace SkipSplashScreen.Plugins
         [HarmonyPrefix]
         public static bool BootSceneUiController_StartAsync_PlayAsync_Prefix(BootSceneUiController __instance, ref float duration)
         {
-            Logger.Log("BootSceneUiController_StartAsync_PlayAsync_Prefix");
-
             SkipFade = true;
             duration = newDuration;
 
@@ -38,8 +36,6 @@ namespace SkipSplashScreen.Plugins
         [HarmonyPostfix]
         public static void BootSceneUiController_IsShowESRB_Postfix(BootSceneUiController __instance, ref bool __result)
         {
-            Logger.Log("BootSceneUiController_IsShowESRB_Postfix");
-
             __result = false;
         }
 
@@ -49,8 +45,6 @@ namespace SkipSplashScreen.Plugins
         [HarmonyPrefix]
         public static bool BootImage_SetPEGI_Prefix(BootImage __instance)
         {
-            Logger.Log("BootImage_SetPEGI_Prefix");
-
             __instance.Type.Value = BootImage.Types.AutoSaveWarning;
 
             return false;
@@ -62,7 +56,6 @@ namespace SkipSplashScreen.Plugins
         [HarmonyPrefix]
         public static bool BootImage_PlayAsync_Prefix(BootImage __instance, ref float duration)
         {
-            Logger.Log("BootImage_PlayAsync_Prefix");
             SkipFade = true;
             duration = newDuration;
 
@@ -77,9 +70,6 @@ namespace SkipSplashScreen.Plugins
         [HarmonyPrefix]
         public static bool FadeCover_FadeInAsync_Prefix(BootSceneUiController __instance, ref float duration)
         {
-            //Logger.Log("");
-            //Logger.Log("FadeCover_FadeInAsync_Prefix");
-
             if (SkipFade)
             {
                 duration = newDuration;
@@ -95,9 +85,6 @@ namespace SkipSplashScreen.Plugins
         [HarmonyPrefix]
         public static bool FadeCover_FadeOutAsync_Prefix(BootSceneUiController __instance, ref float duration)
         {
-            //Logger.Log("");
-            //Logger.Log("FadeCover_FadeOutAsync_Prefix");
-
             if (SkipFade)
             {
                 duration = newDuration;
