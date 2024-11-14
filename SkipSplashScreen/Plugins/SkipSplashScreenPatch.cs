@@ -8,6 +8,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine.Playables;
 
 namespace SkipSplashScreen.Plugins
 {
@@ -21,16 +22,47 @@ namespace SkipSplashScreen.Plugins
         [HarmonyPatch(nameof(BootSceneUiController.Method_Private_UniTask_Single_Boolean_0))]
         [HarmonyPatch(MethodType.Normal)]
         [HarmonyPrefix]
-        public static bool BootSceneUiController_StartAsync_Prefix(BootSceneUiController __instance, ref float duration)
+        public static bool BootSceneUiController_StartAsync_PlayAsync_Prefix(BootSceneUiController __instance, ref float duration)
         {
-            //Logger.Log("");
-            //Logger.Log("BootSceneUiController_StartAsync_Prefix");
-
             SkipFade = true;
             duration = newDuration;
 
             return true;
         }
+
+        [HarmonyPatch(typeof(BootSceneUiController))]
+        [HarmonyPatch(nameof(BootSceneUiController.IsShowESRB))]
+        [HarmonyPatch(MethodType.Normal)]
+        [HarmonyPostfix]
+        public static void BootSceneUiController_IsShowESRB_Postfix(BootSceneUiController __instance, ref bool __result)
+        {
+            __result = false;
+        }
+
+        [HarmonyPatch(typeof(BootImage))]
+        [HarmonyPatch(nameof(BootImage.SetPEGI))]
+        [HarmonyPatch(MethodType.Normal)]
+        [HarmonyPrefix]
+        public static bool BootImage_SetPEGI_Prefix(BootImage __instance)
+        {
+            __instance.Type.Value = BootImage.Types.AutoSaveWarning;
+
+            return false;
+        }
+
+        [HarmonyPatch(typeof(BootImage))]
+        [HarmonyPatch(nameof(BootImage.PlayAsync))]
+        [HarmonyPatch(MethodType.Normal)]
+        [HarmonyPrefix]
+        public static bool BootImage_PlayAsync_Prefix(BootImage __instance, ref float duration)
+        {
+            SkipFade = true;
+            duration = newDuration;
+
+            return true;
+        }
+
+
 
         [HarmonyPatch(typeof(FadeCover))]
         [HarmonyPatch(nameof(FadeCover.FadeInAsync))]
@@ -38,9 +70,6 @@ namespace SkipSplashScreen.Plugins
         [HarmonyPrefix]
         public static bool FadeCover_FadeInAsync_Prefix(BootSceneUiController __instance, ref float duration)
         {
-            //Logger.Log("");
-            //Logger.Log("FadeCover_FadeInAsync_Prefix");
-
             if (SkipFade)
             {
                 duration = newDuration;
@@ -56,9 +85,6 @@ namespace SkipSplashScreen.Plugins
         [HarmonyPrefix]
         public static bool FadeCover_FadeOutAsync_Prefix(BootSceneUiController __instance, ref float duration)
         {
-            //Logger.Log("");
-            //Logger.Log("FadeCover_FadeOutAsync_Prefix");
-
             if (SkipFade)
             {
                 duration = newDuration;
