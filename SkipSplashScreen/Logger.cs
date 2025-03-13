@@ -20,6 +20,10 @@ namespace SkipSplashScreen
     {
         public static void Log(string value, LogType type = LogType.Info)
         {
+            if (Plugin.Log is null)
+            {
+                return;
+            }
             switch (type)
             {
                 case LogType.Info: 
@@ -39,7 +43,7 @@ namespace SkipSplashScreen
                     break;
                 case LogType.Debug:
 #if DEBUG
-                    Plugin.Log.LogDebug(value);
+                    Plugin.Log.LogInfo(value);
 #endif
                     break;
             }

@@ -49,34 +49,32 @@ namespace SkipSplashScreen
             // Patch methods
             _harmony = new Harmony(MyPluginInfo.PLUGIN_GUID);
 
-            if (ConfigEnabled.Value)
+            LoadPlugin(ConfigEnabled.Value);
+        }
+
+        public static void LoadPlugin(bool enabled)
+        {
+            if (enabled)
             {
                 bool result = true;
-                result &= PatchFile(typeof(SkipSplashScreenPatch)); 
-
+                // If any PatchFile fails, result will become false
+                result &= Instance.PatchFile(typeof(SkipSplashScreenPatch));
                 if (result)
                 {
-                    Log.LogInfo($"Plugin {MyPluginInfo.PLUGIN_NAME} is loaded!");
+                    Logger.Log($"Plugin {MyPluginInfo.PLUGIN_NAME} is loaded!");
                 }
                 else
                 {
-                    Log.LogError($"Plugin {MyPluginInfo.PLUGIN_GUID} failed to load.");
+                    Logger.Log($"Plugin {MyPluginInfo.PLUGIN_GUID} failed to load.", LogType.Error);
                     // Unload this instance of Harmony
                     // I hope this works the way I think it does
-                    _harmony.UnpatchSelf();
+                    Instance._harmony.UnpatchSelf();
                 }
             }
             else
             {
-                Log.LogInfo($"Plugin {MyPluginInfo.PLUGIN_NAME} is disabled.");
+                Logger.Log($"Plugin {MyPluginInfo.PLUGIN_NAME} is disabled.");
             }
-
-            //if (ConfigExamplesEnabled.Value)
-            //{
-            //    _harmony.PatchAll(typeof(ExampleSingleHitBigNotesPatch));
-            //    _harmony.PatchAll(typeof(ExampleSortByUraPatch));
-            //    Log.LogInfo($"Plugin {MyPluginInfo.PLUGIN_NAME} Example Patches are loaded!");
-            //}
         }
 
         private bool PatchFile(Type type)
@@ -89,14 +87,14 @@ namespace SkipSplashScreen
             {
                 _harmony.PatchAll(type);
 #if DEBUG
-                Log.LogInfo("File patched: " + type.FullName);
+                Logger.Log("File patched: " + type.FullName);
 #endif
                 return true;
             }
             catch (Exception e)
             {
-                Log.LogInfo("Failed to patch file: " + type.FullName);
-                Log.LogInfo(e.Message);
+                Logger.Log("Failed to patch file: " + type.FullName);
+                Logger.Log(e.Message);
                 return false;
             }
         }
